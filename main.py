@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.externals import joblib
 
 
 def cleanup(raw):
@@ -46,7 +47,19 @@ def train():
     forest = RandomForestClassifier(n_estimators=100)
     forest = forest.fit(train_data_features, train["sentiment"])
 
-    # Done with training
+    # Save the models
+    joblib.dump(vectorizer, 'data/vectorizer.pkl')
+    joblib.dump(forest, 'data/model.pkl')
+
+
+def test():
+    # Load the models
+    vectorizer = joblib.load('data/vectorizer.pkl')
+    forest = joblib.load('data/model.pkl')
+
+    df = pd.read_csv("data/labeledTrainData.tsv", header=0,
+                     delimiter="\t", quoting=3)
+    train, test = np.split(df, [20000], axis=0)
 
     # test = pd.read_csv("data/testData.tsv", header=0, delimiter="\t",
     #                    quoting=3)
@@ -73,8 +86,8 @@ def train():
     output.to_csv("data/Bag_of_Words_model.csv", index=False, quoting=3)
 
 
-def validate(filename):
-    df = pd.read_csv(filename, header=0,
+def validate():
+    df = pd.read_csv("data/Bag_of_Words_model.csv", header=0,
                      delimiter=",", quoting=3)
     hits = 0
     for index, row in df.iterrows():
@@ -84,4 +97,5 @@ def validate(filename):
 
 
 train()
-validate("data/Bag_of_Words_model.csv")
+test()
+validate()
