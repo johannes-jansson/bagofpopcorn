@@ -4,6 +4,7 @@ import re
 # import nltk
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
+# from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
@@ -39,6 +40,13 @@ def train():
                                  preprocessor=None,
                                  stop_words=None,
                                  max_features=5000)
+    # vectorizer = TfidfVectorizer(analyzer="word",
+    #                              tokenizer=None,
+    #                              preprocessor=None,
+    #                              stop_words=None,
+    #                              # max_df=0.9,
+    #                              # min_df=0.1,
+    #                              max_features=5000)
 
     train_data_features = vectorizer.fit_transform(clean_train_reviews).toarray()
     # vocab = vectorizer.get_feature_names()
