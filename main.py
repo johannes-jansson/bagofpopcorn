@@ -89,11 +89,34 @@ def test():
 def validate():
     df = pd.read_csv("data/Bag_of_Words_model.csv", header=0,
                      delimiter=",", quoting=3)
-    hits = 0
+    tps = 0
+    fps = 0
+    tns = 0
+    fns = 0
     for index, row in df.iterrows():
-        if (row['sentiment'] == row['guess']):
-            hits += 1
-    print(hits / 5000.0)
+        if (row['guess']):
+            if(row['sentiment']):
+                tps += 1
+            else:
+                fps += 1
+        else:
+            if(row['sentiment']):
+                fns += 1
+            else:
+                tns += 1
+    
+    precision = tps / (tps + fps)
+    recall = tps / (tps + fns)
+    f1 = 2 * precision * recall / (precision + recall)
+
+    print("correct estimates: {} %".format((tns + tps) / 50.0))
+    print("precision:         {} %".format(100 * precision))
+    print("recall:            {} %".format(100 * recall))
+    print("f1 score:          {} %".format(100 * f1))
+    print("true positives:    {} %".format((tps) / 50.0))
+    print("true negatives:    {} %".format((tns) / 50.0))
+    print("false positives:   {} %".format((fps) / 50.0))
+    print("false negatives:   {} %".format((fns) / 50.0))
 
 
 train()
